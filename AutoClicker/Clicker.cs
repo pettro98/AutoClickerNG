@@ -8,24 +8,6 @@ using System.Threading.Tasks;
 
 namespace AutoClicker
 {
-    internal static class _NativeInterop
-    {
-        public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern bool UnhookWindowsHookEx(IntPtr hhk);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern IntPtr GetModuleHandle(string lpModuleName);
-
-    }
-
     internal class ClickerService : IDisposable
     {
         private const Int32 WH_KEYBOARD_LL = 13;
@@ -51,22 +33,22 @@ namespace AutoClicker
             using Process curProcess = Process.GetCurrentProcess();
             using ProcessModule curModule = curProcess.MainModule!;
 
-            _NativeInterop.LowLevelKeyboardProc keyboardHook = (nCode, wParam, lParam) =>
+            Native.LowLevelKeyboardProc keyboardHook = (nCode, wParam, lParam) =>
             {
                 if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
                 {
                     OnHotkeyPressed(Marshal.ReadInt32(lParam));
                 }
-                return _NativeInterop.CallNextHookEx(_hookId, nCode, wParam, lParam);
+                return Native.CallNextHookEx(_hookId, nCode, wParam, lParam);
             };
-            var moduleHandle = _NativeInterop.GetModuleHandle(curModule.ModuleName);
+            var moduleHandle = Native.GetModuleHandle(curModule.ModuleName);
             if (moduleHandle == IntPtr.Zero)
             {
                 var hr = Marshal.GetHRForLastWin32Error();
                 throw new Exception("GetModuleHandle() failed", Marshal.GetExceptionForHR(hr));
             }
 
-            _hookId = _NativeInterop.SetWindowsHookEx(WH_KEYBOARD_LL, keyboardHook, moduleHandle, 0);
+            _hookId = Native.SetWindowsHookEx(WH_KEYBOARD_LL, keyboardHook, moduleHandle, 0);
             if (_hookId == IntPtr.Zero)
             {
                 var hr = Marshal.GetHRForLastWin32Error();
@@ -78,7 +60,7 @@ namespace AutoClicker
         {
             if (_hookId != IntPtr.Zero)
             {
-                var success = _NativeInterop.UnhookWindowsHookEx(_hookId);
+                var success = Native.UnhookWindowsHookEx(_hookId);
                 if (!success)
                 {
                     var hr = Marshal.GetHRForLastWin32Error();

@@ -11,106 +11,81 @@ namespace AutoClicker
             // TODO add information to status bar (hotkey, active, mode/replay, click count remaining, ...)
             InitializeComponent();
 
-            SetInputValidationEventHandlers();
-            SetUIChangeEventHandlers();
-            SetDataEventHandlers();
+            SetEventHandlers();
 
             SetStartingControlValues();
         }
 
-        private void SetInputValidationEventHandlers()
+        private void positionTypeChoose_SelectedIndexChanged(object? o, EventArgs e)
         {
-            CancelEventHandler validateUpDownMinMax = (sender, eventArgs) =>
+            if (positionTypeChoose.SelectedIndex == 0) // Cursor
             {
-                var upDown = (NumericUpDown)sender!;
-
-                if (upDown.Value > upDown.Maximum || upDown.Value < upDown.Minimum)
-                {
-                    eventArgs.Cancel = true;
-                    //errorProvider.SetError(upDown, "Value out of bounds");
-                }
-                else
-                {
-                    //errorProvider.SetError(upDown, null);
-                }
-            };
-
-            minutesUpDown.Validating += validateUpDownMinMax;
-            secondsUpDown.Validating += validateUpDownMinMax;
-            millisecondsUpDown.Validating += validateUpDownMinMax;
-            randomOffsetUpDown.Validating += validateUpDownMinMax;
-
-            repeatCountUpDown.Validating += validateUpDownMinMax;
+                positionLabel.Enabled = false;
+                positionXText.Enabled = false;
+                positionSeparatorLabel.Enabled = false;
+                positionYText.Enabled = false;
+                selectPositionLabel.Enabled = false;
+                selectPositionButton.Enabled = false;
+                selectedWindowLabel.Enabled = false;
+                selectedWindowButton.Enabled = false;
+            }
+            else if (positionTypeChoose.SelectedIndex == 1) // Screen relative
+            {
+                positionLabel.Enabled = true;
+                positionXText.Enabled = true;
+                positionSeparatorLabel.Enabled = true;
+                positionYText.Enabled = true;
+                selectPositionLabel.Enabled = true;
+                selectPositionButton.Enabled = true;
+                selectedWindowLabel.Enabled = false;
+                selectedWindowButton.Enabled = false;
+            }
+            else if (positionTypeChoose.SelectedIndex == 2) // Window relative
+            {
+                positionLabel.Enabled = true;
+                positionXText.Enabled = true;
+                positionSeparatorLabel.Enabled = true;
+                positionYText.Enabled = true;
+                selectPositionLabel.Enabled = true;
+                selectPositionButton.Enabled = true;
+                selectedWindowLabel.Enabled = true;
+                selectedWindowButton.Enabled = true;
+            }
         }
 
-        private void SetUIChangeEventHandlers()
+        private void repeatModeChoose_SelectedIndexChanged(object? o, EventArgs e)
+        {
+            if (repeatModeChoose.SelectedIndex == 0) // Until stopped
+            {
+                repeatCountLabel.Enabled = false;
+                repeatCountUpDown.Enabled = false;
+            }
+            else if (repeatModeChoose.SelectedIndex == 1) // Fixed count
+            {
+                repeatCountLabel.Enabled = true;
+                repeatCountUpDown.Enabled = true;
+            }
+        }
+
+        private void hotkeyButton_Click(object? o, EventArgs e)
+        {
+            var hotkeyDialog = new HotkeyDialog();
+            hotkeyDialog.ShowDialog(this);
+            if (hotkeyDialog.keys != Keys.None)
+            {
+                StartStopHotkeyChanged((Keys)hotkeyDialog.keys);
+            }
+        }
+
+        private void SetEventHandlers()
         {
             // TODO need to translate coordinates between screen-space and window-space
             // TODO check if can send event for window parts that are outside screen
-            positionTypeChoose.SelectedIndexChanged += (sender, eventArgs) =>
-            {
-                if (positionTypeChoose.SelectedIndex == 0) // Cursor
-                {
-                    positionLabel.Enabled = false;
-                    positionXText.Enabled = false;
-                    positionSeparatorLabel.Enabled = false;
-                    positionYText.Enabled = false;
-                    selectPositionLabel.Enabled = false;
-                    selectPositionButton.Enabled = false;
-                    selectedWindowLabel.Enabled = false;
-                    selectedWindowButton.Enabled = false;
-                }
-                else if (positionTypeChoose.SelectedIndex == 1) // Screen relative
-                {
-                    positionLabel.Enabled = true;
-                    positionXText.Enabled = true;
-                    positionSeparatorLabel.Enabled = true;
-                    positionYText.Enabled = true;
-                    selectPositionLabel.Enabled = true;
-                    selectPositionButton.Enabled = true;
-                    selectedWindowLabel.Enabled = false;
-                    selectedWindowButton.Enabled = false;
-                }
-                else if (positionTypeChoose.SelectedIndex == 2) // Window relative
-                {
-                    positionLabel.Enabled = true;
-                    positionXText.Enabled = true;
-                    positionSeparatorLabel.Enabled = true;
-                    positionYText.Enabled = true;
-                    selectPositionLabel.Enabled = true;
-                    selectPositionButton.Enabled = true;
-                    selectedWindowLabel.Enabled = true;
-                    selectedWindowButton.Enabled = true;
-                }
-            };
-
-            repeatModeChoose.SelectedIndexChanged += (sender, eventArgs) =>
-            {
-                if (repeatModeChoose.SelectedIndex == 0) // Until stopped
-                {
-                    repeatCountLabel.Enabled = false;
-                    repeatCountUpDown.Enabled = false;
-                }
-                else if (repeatModeChoose.SelectedIndex == 1) // Fixed count
-                {
-                    repeatCountLabel.Enabled = true;
-                    repeatCountUpDown.Enabled = true;
-                }
-            };
+            positionTypeChoose.SelectedIndexChanged += positionTypeChoose_SelectedIndexChanged;
+            repeatModeChoose.SelectedIndexChanged += repeatModeChoose_SelectedIndexChanged;
+            hotkeyButton.Click += hotkeyButton_Click;
         }
 
-        private void SetDataEventHandlers()
-        {
-            hotkeyButton.Click += (sender, e) =>
-            {
-                var hotkeyDialog = new HotkeyDialog();
-                hotkeyDialog.ShowDialog(this);
-                if (hotkeyDialog.keys != Keys.None)
-                {
-                    StartStopHotkeyChanged((Keys)hotkeyDialog.keys);
-                }
-            };
-        }
 
         private void SetStartingControlValues()
         {

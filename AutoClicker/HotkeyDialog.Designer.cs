@@ -28,69 +28,130 @@ namespace AutoClicker
         /// </summary>
         private void InitializeComponent()
         {
-            Label label1;
-            tableLayoutPanel1 = new TableLayoutPanel();
-            hotkeyLabel = new Label();
-            label1 = new Label();
-            tableLayoutPanel1.SuspendLayout();
+            TableLayoutPanel hotkeyRecordTableLayout;
+            TableLayoutPanel confirmCancelTableLayout;
+            TableLayoutPanel mainTableLayout;
+            recordHotheyButton = new Button();
+            hotkeyText = new TextBox();
+            confirmButton = new Button();
+            cancelButton = new Button();
+            hotkeyRecordTableLayout = new TableLayoutPanel();
+            confirmCancelTableLayout = new TableLayoutPanel();
+            mainTableLayout = new TableLayoutPanel();
+            hotkeyRecordTableLayout.SuspendLayout();
+            confirmCancelTableLayout.SuspendLayout();
+            mainTableLayout.SuspendLayout();
             SuspendLayout();
             // 
-            // label1
+            // hotkeyRecordTableLayout
             // 
-            label1.AutoSize = true;
-            label1.Dock = DockStyle.Fill;
-            label1.Location = new Point(3, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(207, 57);
-            label1.TabIndex = 1;
-            label1.Text = "Enter new hotkey\r\n(Enter) to confirm\r\n(Esc) to cancel";
-            label1.TextAlign = ContentAlignment.MiddleCenter;
+            hotkeyRecordTableLayout.ColumnCount = 2;
+            hotkeyRecordTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            hotkeyRecordTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 66.6666641F));
+            hotkeyRecordTableLayout.Controls.Add(recordHotheyButton, 0, 0);
+            hotkeyRecordTableLayout.Controls.Add(hotkeyText, 1, 0);
+            hotkeyRecordTableLayout.Dock = DockStyle.Fill;
+            hotkeyRecordTableLayout.Location = new Point(0, 0);
+            hotkeyRecordTableLayout.Margin = new Padding(0);
+            hotkeyRecordTableLayout.Name = "hotkeyRecordTableLayout";
+            hotkeyRecordTableLayout.RowCount = 1;
+            hotkeyRecordTableLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            hotkeyRecordTableLayout.Size = new Size(420, 30);
+            hotkeyRecordTableLayout.TabIndex = 0;
             // 
-            // tableLayoutPanel1
+            // recordHotheyButton
             // 
-            tableLayoutPanel1.ColumnCount = 1;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Controls.Add(hotkeyLabel, 0, 1);
-            tableLayoutPanel1.Controls.Add(label1, 0, 0);
-            tableLayoutPanel1.Location = new Point(12, 12);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 2;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 26F));
-            tableLayoutPanel1.Size = new Size(213, 83);
-            tableLayoutPanel1.TabIndex = 3;
+            recordHotheyButton.Dock = DockStyle.Fill;
+            recordHotheyButton.Location = new Point(3, 3);
+            recordHotheyButton.Name = "recordHotheyButton";
+            recordHotheyButton.Size = new Size(133, 24);
+            recordHotheyButton.TabIndex = 0;
+            recordHotheyButton.Text = "Record hotkey";
+            recordHotheyButton.UseVisualStyleBackColor = true;
             // 
-            // hotkeyLabel
+            // hotkeyText
             // 
-            hotkeyLabel.AutoSize = true;
-            hotkeyLabel.BorderStyle = BorderStyle.Fixed3D;
-            hotkeyLabel.Dock = DockStyle.Fill;
-            hotkeyLabel.Location = new Point(3, 57);
-            hotkeyLabel.Name = "hotkeyLabel";
-            hotkeyLabel.Size = new Size(207, 26);
-            hotkeyLabel.TabIndex = 4;
-            hotkeyLabel.Text = "[<modifiers>]+Letter/Digit/Fkey";
-            hotkeyLabel.TextAlign = ContentAlignment.MiddleCenter;
+            hotkeyText.Dock = DockStyle.Fill;
+            hotkeyText.Location = new Point(142, 3);
+            hotkeyText.Name = "hotkeyText";
+            hotkeyText.PlaceholderText = "Optional modifiers + Letter/Digit/Numpad/F-key";
+            hotkeyText.ReadOnly = true;
+            hotkeyText.Size = new Size(275, 23);
+            hotkeyText.TabIndex = 1;
+            // 
+            // confirmCancelTableLayout
+            // 
+            confirmCancelTableLayout.ColumnCount = 2;
+            confirmCancelTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            confirmCancelTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            confirmCancelTableLayout.Controls.Add(confirmButton, 0, 0);
+            confirmCancelTableLayout.Controls.Add(cancelButton, 1, 0);
+            confirmCancelTableLayout.Dock = DockStyle.Fill;
+            confirmCancelTableLayout.Location = new Point(0, 30);
+            confirmCancelTableLayout.Margin = new Padding(0);
+            confirmCancelTableLayout.Name = "confirmCancelTableLayout";
+            confirmCancelTableLayout.RowCount = 1;
+            confirmCancelTableLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            confirmCancelTableLayout.Size = new Size(420, 30);
+            confirmCancelTableLayout.TabIndex = 1;
+            // 
+            // confirmButton
+            // 
+            confirmButton.Dock = DockStyle.Fill;
+            confirmButton.Location = new Point(3, 3);
+            confirmButton.Name = "confirmButton";
+            confirmButton.Size = new Size(204, 24);
+            confirmButton.TabIndex = 0;
+            confirmButton.Text = "Confirm";
+            confirmButton.UseVisualStyleBackColor = true;
+            // 
+            // cancelButton
+            // 
+            cancelButton.Dock = DockStyle.Fill;
+            cancelButton.Location = new Point(213, 3);
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new Size(204, 24);
+            cancelButton.TabIndex = 1;
+            cancelButton.Text = "Cancel";
+            cancelButton.UseVisualStyleBackColor = true;
+            // 
+            // mainTableLayout
+            // 
+            mainTableLayout.ColumnCount = 1;
+            mainTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            mainTableLayout.Controls.Add(hotkeyRecordTableLayout, 0, 0);
+            mainTableLayout.Controls.Add(confirmCancelTableLayout, 0, 1);
+            mainTableLayout.Location = new Point(12, 12);
+            mainTableLayout.Name = "mainTableLayout";
+            mainTableLayout.RowCount = 2;
+            mainTableLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            mainTableLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            mainTableLayout.Size = new Size(420, 60);
+            mainTableLayout.TabIndex = 3;
             // 
             // HotkeyDialog
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(237, 106);
-            Controls.Add(tableLayoutPanel1);
+            ClientSize = new Size(443, 83);
+            Controls.Add(mainTableLayout);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             KeyPreview = true;
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "HotkeyDialog";
             Text = "Hotkey";
-            tableLayoutPanel1.ResumeLayout(false);
-            tableLayoutPanel1.PerformLayout();
+            hotkeyRecordTableLayout.ResumeLayout(false);
+            hotkeyRecordTableLayout.PerformLayout();
+            confirmCancelTableLayout.ResumeLayout(false);
+            mainTableLayout.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
-        private TableLayoutPanel tableLayoutPanel1;
-        private Label hotkeyLabel;
+        private Button recordHotheyButton;
+        private TextBox hotkeyText;
+        private Button confirmButton;
+        private Button cancelButton;
     }
 }
