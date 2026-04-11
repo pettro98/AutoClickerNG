@@ -6,15 +6,27 @@ namespace AutoClicker
 {
     public partial class MainForm : Form
     {
+        private const string _EmptyHotkeyValueStatusLabel = "<Not set>";
+
+
+        // TODO add information to status bar (hotkey, active, mode/replay, click count remaining, ...)
+        // TODO need to translate coordinates between screen-space and window-space
+        // TODO check if can send event for window parts that are outside screen
         public MainForm()
         {
-            // TODO add information to status bar (hotkey, active, mode/replay, click count remaining, ...)
             InitializeComponent();
 
-            SetEventHandlers();
+            positionTypeChoose.SelectedIndexChanged += positionTypeChoose_SelectedIndexChanged;
+            repeatModeChoose.SelectedIndexChanged += repeatModeChoose_SelectedIndexChanged;
+            hotkeyButton.Click += hotkeyButton_Click;
+
+            HotkeyChanged += MainForm_HotkeyChanged;
 
             SetStartingControlValues();
         }
+
+
+        // event handlers
 
         private void positionTypeChoose_SelectedIndexChanged(object? o, EventArgs e)
         {
@@ -69,23 +81,29 @@ namespace AutoClicker
 
         private void hotkeyButton_Click(object? o, EventArgs e)
         {
-            var hotkeyDialog = new HotkeyDialog();
+            var hotkeyDialog = new HotkeyDialog(_currentHotkey);
             hotkeyDialog.ShowDialog(this);
-            if (hotkeyDialog.keys != Keys.None)
+            var newHotkey = hotkeyDialog.GetNewHotkey();
+            if (newHotkey != Keys.None && newHotkey != _currentHotkey)
             {
-                StartStopHotkeyChanged((Keys)hotkeyDialog.keys);
+                SetNewHotkey(newHotkey);
             }
         }
 
-        private void SetEventHandlers()
+        private void MainForm_HotkeyChanged(Keys newHotkey)
         {
-            // TODO need to translate coordinates between screen-space and window-space
-            // TODO check if can send event for window parts that are outside screen
-            positionTypeChoose.SelectedIndexChanged += positionTypeChoose_SelectedIndexChanged;
-            repeatModeChoose.SelectedIndexChanged += repeatModeChoose_SelectedIndexChanged;
-            hotkeyButton.Click += hotkeyButton_Click;
+            if (newHotkey != Keys.None)
+            {
+                hotkeyValueStatusLabel.Text = Helpers.ParseHotkey(newHotkey);
+            }
+            else
+            {
+                hotkeyValueStatusLabel.Text = _EmptyHotkeyValueStatusLabel;
+            }
         }
 
+
+        // private general methods
 
         private void SetStartingControlValues()
         {
@@ -106,6 +124,8 @@ namespace AutoClicker
             clickTypeChoose.SelectedIndex = 0;
             repeatModeChoose.SelectedIndex = 0;
             repeatCountUpDown.Value = 0;
+
+            SetNewHotkey(Keys.None);
         }
 
         private decimal GetSelectedIntervalMsec()
@@ -119,8 +139,18 @@ namespace AutoClicker
             return intervalMsec;
         }
 
+        private void SetNewHotkey(Keys newHotkey)
+        {
+            _currentHotkey = newHotkey;
+            HotkeyChanged?.Invoke(_currentHotkey);
+        }
+
+        // data members
+
         public delegate void HotkeyHandler(Keys newHotkey);
-        public event HotkeyHandler StartStopHotkeyChanged;
+        public event HotkeyHandler? HotkeyChanged;
+
+        private Keys _currentHotkey = Keys.None;
     }
 
 }

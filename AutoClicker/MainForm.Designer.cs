@@ -40,6 +40,7 @@ namespace AutoClicker
             GroupBox clickPositionGroup;
             TableLayoutPanel viewOptionsTableLayout;
             GroupBox miscOptionsGroup;
+            ToolStripStatusLabel hotkeyStatusLabel;
             minutesUpDown = new NumericUpDown();
             secondsUpDownLabel = new Label();
             millisecondsUpDown = new NumericUpDown();
@@ -72,6 +73,7 @@ namespace AutoClicker
             hotkeyButton = new Button();
             recordControlLabel = new Label();
             statusBar = new StatusStrip();
+            hotkeyValueStatusLabel = new ToolStripStatusLabel();
             errorProvider = new ErrorProvider(components);
             clickIntervalTimeTableLayout = new TableLayoutPanel();
             clickIntervalGroup = new GroupBox();
@@ -84,6 +86,7 @@ namespace AutoClicker
             clickPositionGroup = new GroupBox();
             viewOptionsTableLayout = new TableLayoutPanel();
             miscOptionsGroup = new GroupBox();
+            hotkeyStatusLabel = new ToolStripStatusLabel();
             clickIntervalTimeTableLayout.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)minutesUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)millisecondsUpDown).BeginInit();
@@ -100,6 +103,7 @@ namespace AutoClicker
             clickPositionGroup.SuspendLayout();
             viewOptionsTableLayout.SuspendLayout();
             miscOptionsGroup.SuspendLayout();
+            statusBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)errorProvider).BeginInit();
             SuspendLayout();
             // 
@@ -621,13 +625,26 @@ namespace AutoClicker
             miscOptionsGroup.TabStop = false;
             miscOptionsGroup.Text = "Misc";
             // 
+            // hotkeyStatusLabel
+            // 
+            hotkeyStatusLabel.Name = "hotkeyStatusLabel";
+            hotkeyStatusLabel.Size = new Size(45, 17);
+            hotkeyStatusLabel.Text = "Hotkey";
+            // 
             // statusBar
             // 
+            statusBar.Items.AddRange(new ToolStripItem[] { hotkeyStatusLabel, hotkeyValueStatusLabel });
             statusBar.Location = new Point(0, 269);
             statusBar.Name = "statusBar";
             statusBar.Size = new Size(500, 22);
             statusBar.SizingGrip = false;
             statusBar.TabIndex = 5;
+            // 
+            // hotkeyValueStatusLabel
+            // 
+            hotkeyValueStatusLabel.Name = "hotkeyValueStatusLabel";
+            hotkeyValueStatusLabel.Size = new Size(61, 17);
+            hotkeyValueStatusLabel.Text = "<Not set>";
             // 
             // errorProvider
             // 
@@ -671,6 +688,8 @@ namespace AutoClicker
             viewOptionsTableLayout.ResumeLayout(false);
             viewOptionsTableLayout.PerformLayout();
             miscOptionsGroup.ResumeLayout(false);
+            statusBar.ResumeLayout(false);
+            statusBar.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)errorProvider).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -711,5 +730,6 @@ namespace AutoClicker
         private Label recordControlLabel;
         private Label positionSeparatorLabel;
         private ErrorProvider errorProvider;
+        private ToolStripStatusLabel hotkeyValueStatusLabel;
     }
 }

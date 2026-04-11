@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography.Pkcs;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,154 +16,131 @@ namespace AutoClicker
 {
     public partial class HotkeyDialog : Form
     {
-        public Keys keys = Keys.None;
-
         private const string _RecordButtonTextActive = "Cancel recording";
         private const string _RecordButtonTextInactive = "Record hotkey";
 
-        private bool _listenKeys = false;
-        private Keys _currentHotkey = Keys.None;
-        private Keys _newHotkey = Keys.None;
+        private bool _isRecordingHotkey = false;
+        private Keys _recordedHotkey = Keys.None; // to store incomplete hotkey when recording
+        private Keys _savedHotkey = Keys.None; // to store committed hotkey
 
         public HotkeyDialog(Keys currentHotkey)
         {
             InitializeComponent();
 
+            CancelButton = cancelButton;
+
+            KeyDown += HotkeyDialog_KeyDown;
+
+            recordHotkeyButton.Click += RecordHotkeyButton_Click;
+            cancelButton.Click += CancelButton_Click;
+            confirmButton.Click += ConfirmButton_Click;
+
             // HotkeyDialog.KeyPreview must be enabled so
             // the dialog itself can see all keyboard events
-            // KeyDown += OnKeyDown; // enble after start record
 
-            _currentHotkey = currentHotkey;
-            recordHotheyButton.Click += RecordHotkeyButton_Click;
+            _savedHotkey = currentHotkey;
 
-            var (currentHotkeyText, currentHotkeyValid) = ParseValidateHotkey(currentHotkey);
-            hotkeyText.Text = currentHotkeyText;
+            UpdateHotkeyTextAndButtons();
         }
 
-        private static string ParseHotkey(Keys hotkey)
+
+        // event handlers
+
+        private void HotkeyDialog_KeyDown(object? sender, KeyEventArgs e)
         {
-            string text = "";
-
-            if ((hotkey & Keys.Control) != Keys.None)
+            if (!_isRecordingHotkey)
             {
-                text += "Ctrl + ";
-            }
-            if ((hotkey & Keys.Shift) != Keys.None)
-            {
-                text += "Shift + ";
-            }
-            if ((hotkey & Keys.Alt) != Keys.None)
-            {
-                text += "Alt + ";
+                return;
             }
 
-            Keys keyCode = hotkey & Keys.KeyCode;
+            e.SuppressKeyPress = true;
 
-            if (IsValidHotkey(keyCode))
+            _recordedHotkey = Helpers.NormalizeHotkey(e.KeyData);
+            UpdateHotkeyTextAndButtons();
+            if ((_recordedHotkey & Keys.KeyCode) != Keys.None)
             {
-                text += keyCode;
+                SetRecordingActive(false);
             }
-
-            return text;
-        }
-
-        private static bool IsValidHotkey(Keys hotkey)
-        {
-            Keys keyCode = hotkey & Keys.KeyCode;
-
-            return (keyCode >= Keys.A && keyCode <= Keys.Z) ||
-                (keyCode >= Keys.D0 && keyCode <= Keys.D9) ||
-                (keyCode >= Keys.F1 && keyCode <= Keys.F24) ||
-                (keyCode >= Keys.NumPad0 && keyCode <= Keys.NumPad9);
         }
 
         private void RecordHotkeyButton_Click(object? sender, EventArgs e)
         {
-            ListenKeysSetEnabled(!_listenKeys);
-            if (_listenKeys)
+            SetRecordingActive(!_isRecordingHotkey);
+        }
+
+        private void CancelButton_Click(object? sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void ConfirmButton_Click(object? sender, EventArgs e)
+        {
+            SaveHotkey();
+            Close();
+        }
+
+
+        // private general methods
+
+        private void UpdateHotkeyTextAndButtons()
+        {
+            cancelButton.Enabled = !_isRecordingHotkey;
+
+            if (_isRecordingHotkey)
             {
-                recordHotheyButton
+                recordHotkeyButton.Text = _RecordButtonTextActive;
+                confirmButton.Enabled = false;
             }
             else
             {
-                KeyDown += HotkeyDialog_KeyDown;
-                _listenKeys = true;
+                recordHotkeyButton.Text = _RecordButtonTextInactive;
+                confirmButton.Enabled = (_recordedHotkey != Keys.None);
             }
 
-        }
-
-        private void ListenKeysSetEnabled(bool enable)
-        {
-            if (enable == _listenKeys)
+            if (_recordedHotkey != Keys.None)
             {
-                return;
+                hotkeyText.Text = Helpers.ParseHotkey(_recordedHotkey);
             }
-            if (enable)
+            else if (_isRecordingHotkey)
             {
-                KeyDown += HotkeyDialog_KeyDown;
-                _listenKeys = true;
+                hotkeyText.Text = null;
             }
             else
             {
-                KeyDown -= HotkeyDialog_KeyDown;
-                _listenKeys = false;
+                hotkeyText.Text = Helpers.ParseHotkey(_savedHotkey);
             }
-
         }
 
-        private void HotkeyDialog_KeyDown(object? sender, KeyEventArgs e)
+        private void SaveHotkey()
         {
-            if (e.KeyData == Keys.Enter && keys != Keys.None)
+            _savedHotkey = _recordedHotkey;
+        }
+
+        private void SetRecordingActive(bool active)
+        {
+            if (_isRecordingHotkey == active)
             {
-                Close();
-                return;
-            }
-            else if (e.KeyData == Keys.Escape)
-            {
-                keys = Keys.None;
-                Close();
                 return;
             }
 
-            var key = e.KeyData & Keys.KeyCode;
-            var keysText = new List<string> { };
+            _isRecordingHotkey = active;
 
-            if (e.Control)
+            if (_isRecordingHotkey)
             {
-                keysText.Add("Ctrl");
+                _recordedHotkey = Keys.None;
             }
-            if (e.Shift)
+            else if ((_recordedHotkey & Keys.KeyCode) == Keys.None)
             {
-                keysText.Add("Shift");
-            }
-            if (e.Alt)
-            {
-                keysText.Add("Alt");
-            }
-            if (key != Keys.None && (
-                (key >= Keys.A && key <= Keys.Z) ||
-                (key >= Keys.D0 && key <= Keys.D9) ||
-                (key >= Keys.F1 && key <= Keys.F24) ||
-                (key >= Keys.NumPad0 && key <= Keys.NumPad9)
-            ))
-            {
-                keys = e.KeyData;
-                keysText.Add(key.ToString());
-            }
-            else
-            {
-                keys = Keys.None;
+                _recordedHotkey = Keys.None; // reset the value if hotkey wasnt properly recorded
             }
 
-            if (keysText.Count > 0)
-            {
-                hotkeyLabel.Text = string.Join(" + ", keysText);
-            }
+            UpdateHotkeyTextAndButtons();
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
 
-        }
+        // public methods
+
+        public Keys GetNewHotkey() => _savedHotkey;
+
     }
 }

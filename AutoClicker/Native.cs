@@ -22,5 +22,8 @@ namespace AutoClicker
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern short GetAsyncKeyState(int vKey);
     }
 }

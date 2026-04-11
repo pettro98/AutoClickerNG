@@ -31,7 +31,7 @@ namespace AutoClicker
             TableLayoutPanel hotkeyRecordTableLayout;
             TableLayoutPanel confirmCancelTableLayout;
             TableLayoutPanel mainTableLayout;
-            recordHotheyButton = new Button();
+            recordHotkeyButton = new Button();
             hotkeyText = new TextBox();
             confirmButton = new Button();
             cancelButton = new Button();
@@ -48,7 +48,7 @@ namespace AutoClicker
             hotkeyRecordTableLayout.ColumnCount = 2;
             hotkeyRecordTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             hotkeyRecordTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 66.6666641F));
-            hotkeyRecordTableLayout.Controls.Add(recordHotheyButton, 0, 0);
+            hotkeyRecordTableLayout.Controls.Add(recordHotkeyButton, 0, 0);
             hotkeyRecordTableLayout.Controls.Add(hotkeyText, 1, 0);
             hotkeyRecordTableLayout.Dock = DockStyle.Fill;
             hotkeyRecordTableLayout.Location = new Point(0, 0);
@@ -59,19 +59,20 @@ namespace AutoClicker
             hotkeyRecordTableLayout.Size = new Size(420, 30);
             hotkeyRecordTableLayout.TabIndex = 0;
             // 
-            // recordHotheyButton
+            // recordHotkeyButton
             // 
-            recordHotheyButton.Dock = DockStyle.Fill;
-            recordHotheyButton.Location = new Point(3, 3);
-            recordHotheyButton.Name = "recordHotheyButton";
-            recordHotheyButton.Size = new Size(133, 24);
-            recordHotheyButton.TabIndex = 0;
-            recordHotheyButton.Text = "Record hotkey";
-            recordHotheyButton.UseVisualStyleBackColor = true;
+            recordHotkeyButton.Dock = DockStyle.Fill;
+            recordHotkeyButton.Location = new Point(3, 3);
+            recordHotkeyButton.Name = "recordHotkeyButton";
+            recordHotkeyButton.Size = new Size(133, 24);
+            recordHotkeyButton.TabIndex = 0;
+            recordHotkeyButton.Text = "Record hotkey";
+            recordHotkeyButton.UseVisualStyleBackColor = true;
             // 
             // hotkeyText
             // 
             hotkeyText.Dock = DockStyle.Fill;
+            hotkeyText.Enabled = false;
             hotkeyText.Location = new Point(142, 3);
             hotkeyText.Name = "hotkeyText";
             hotkeyText.PlaceholderText = "Optional modifiers + Letter/Digit/Numpad/F-key";
@@ -135,12 +136,13 @@ namespace AutoClicker
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(443, 83);
             Controls.Add(mainTableLayout);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             KeyPreview = true;
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "HotkeyDialog";
-            Text = "Hotkey";
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Change hotkey";
             hotkeyRecordTableLayout.ResumeLayout(false);
             hotkeyRecordTableLayout.PerformLayout();
             confirmCancelTableLayout.ResumeLayout(false);
@@ -149,7 +151,7 @@ namespace AutoClicker
         }
 
         #endregion
-        private Button recordHotheyButton;
+        private Button recordHotkeyButton;
         private TextBox hotkeyText;
         private Button confirmButton;
         private Button cancelButton;
