@@ -14,6 +14,7 @@ namespace AutoClicker
             ScreenRelative,
             WindowRelative
         }
+        new Binding
 
         public delegate void IntervalChangedHandler(uint newInterval);
         public event IntervalChangedHandler? IntervalChangedMin;
